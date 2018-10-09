@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 public class Id3 {
 
 	/*
-	 * 1. read training data set and test data set (in form of text files)
+	 * 1. Read dataset in form of csv
 	 * 2. Build model using training data as input
 	 * 3. Print out representation of model (the tree)
 	 * 4. Run test against the model
@@ -17,8 +17,6 @@ public class Id3 {
 		//Printout accuracy and confusion matrix
 		Model model = new Model();
 		model.readFile();
-		String target = model.header.get(0);
-		model.mctv();
 		model.makeListofAttributes(model.header);
 		DecisionTree dt = model.makeModel(model.trainset, model.aList);
 		

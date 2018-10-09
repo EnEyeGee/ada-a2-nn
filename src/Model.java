@@ -107,6 +107,7 @@ public class Model {
 		List<String[]> newset = new ArrayList<String[]>();
 		valueset.clear();
 		countset.clear();
+		mctv(dataset);
 		
 		//Create root node for the tree
 		DecisionTree dt = new DecisionTree();
@@ -121,7 +122,7 @@ public class Model {
 		}
 		
 		//If the attributes is empty
-		if (aCopy.isEmpty() || dataset.isEmpty()) {
+		if (aCopy.isEmpty()) {
 			tn.setLabel(mctv);
 			return dt;
 		}
@@ -187,13 +188,12 @@ public class Model {
 
 		
 		//Best Attribute found, delete attribute from attributes list
-		int z = indexofString(bestA, aList);
-		aList.remove(z);
+		int z = indexofString(bestA, aCopy);
+		aCopy.remove(z);
 		tn.setAttribute(bestA);
 		
-		//creating valueset for the best attribute
+		//creating bestset for the best attribute
 		int iog = indexofString(bestA, header); 
-		//finding out how many values in the attribute
 		for (int i = 0; i < dataset.size(); i++) {
 			String[] tempA = dataset.get(i);
 			newValue = tempA[iog];
@@ -201,12 +201,13 @@ public class Model {
 				bestset.add(newValue);
 			}
 		}
-		for (String str: bestset) {
+		for (int j=0; j < bestset.size(); j++) {
 			//create new set
 			//loop through dataset and populate the new set
+			newset.clear();
 			for (int i = 0; i<dataset.size(); i++) {
 				String[] tempA = dataset.get(i);
-				if (str.equals(tempA[iog])) {
+				if (bestset.get(j).equals(tempA[iog])) {
 					newset.add(tempA);
 				}
 			}
@@ -218,9 +219,9 @@ public class Model {
 				nn.setParent(tn);
 				return dt;
 			}
-			DecisionTree nt = makeModel(newset, aList);
+			DecisionTree nt = makeModel(newset, aCopy);
 			tn.addChild(nt.getRoot());
-			nt.getRoot().setValue(str);
+			nt.getRoot().setValue(bestset.get(j));
 			nt.getRoot().setParent(tn);
 		}
 		
@@ -257,15 +258,15 @@ public class Model {
 	/*
 	 * To populate the most common target value
 	 */
-	public void mctv() {
+	public void mctv(List<String[]> dataset) {
 		
 		valueset.clear();
 		countset.clear();
 		String newV = "";
 		int bc = 0;
 		
-		for (int i = 0; i < trainset.size(); i++) {
-			String[] tempA = trainset.get(i);
+		for (int i = 0; i < dataset.size(); i++) {
+			String[] tempA = dataset.get(i);
 			newV = tempA[0];
 			if (isNew(newV, valueset)) {
 				valueset.add(newV);
@@ -362,6 +363,6 @@ public class Model {
 				c[0]++;
 			}
 		}
-		System.out.println("Accuracy : " + (double)c[0]/(double)testset.size());
+		System.out.println("Accuracy: " + (double)c[0]/(double)testset.size());
 	}
 }
